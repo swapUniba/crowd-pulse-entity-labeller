@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/crowd-pulse-message-labeller.iml" filepath="$PROJECT_DIR$/.idea/modules/crowd-pulse-message-labeller.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/crowd-pulse-message-labeller_main.iml" filepath="$PROJECT_DIR$/.idea/modules/crowd-pulse-message-labeller_main.iml" group="crowd-pulse-message-labeller" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/crowd-pulse-message-labeller_test.iml" filepath="$PROJECT_DIR$/.idea/modules/crowd-pulse-message-labeller_test.iml" group="crowd-pulse-message-labeller" />
+    </modules>
+  </component>
+</project>
