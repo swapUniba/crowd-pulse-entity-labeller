@@ -6,9 +6,11 @@ import rx.observers.SafeSubscriber;
 
 public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabellerConfig> {
 
+    private static final String PLUGIN_NAME = "message-labeller";
+
     @Override
     public String getName() {
-        return null;
+        return PLUGIN_NAME;
     }
 
     @Override
