@@ -1,3 +1,5 @@
+package com.github.swapUniba.pulse.crowd.messagelabeller;
+
 import com.github.frapontillo.pulse.crowd.data.entity.Message;
 import com.github.frapontillo.pulse.spi.IPlugin;
 import com.github.frapontillo.pulse.util.PulseLogger;

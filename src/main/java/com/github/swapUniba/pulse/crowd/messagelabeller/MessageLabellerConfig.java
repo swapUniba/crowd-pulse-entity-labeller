@@ -1,3 +1,5 @@
+package com.github.swapUniba.pulse.crowd.messagelabeller;
+
 import com.github.frapontillo.pulse.spi.IPluginConfig;
 import com.github.frapontillo.pulse.spi.PluginConfigHelper;
 import com.google.gson.JsonElement;
