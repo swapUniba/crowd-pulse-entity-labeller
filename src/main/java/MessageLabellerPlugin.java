@@ -28,16 +28,18 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
 
             @Override
             public void onCompleted() {
-
+                subscriber.onCompleted();
             }
 
             @Override
             public void onError(Throwable e) {
+                logger.error("ERRORE:" + e.toString());
                 subscriber.onError(e);
             }
 
             @Override
             public void onNext(Message message) {
+                message.setParent(messageLabellerConfig.getClassName());
                 subscriber.onNext(message);
             }
         });
