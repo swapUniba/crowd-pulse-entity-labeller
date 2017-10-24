@@ -65,11 +65,10 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
         if (message.getTags() == null) {
             message.setTags(new HashSet<>());
         }
-        Set<Tag> customTags = message.getTags();
+        Set<Tag> customTags = new HashSet<>(message.getTags());
         Tag tag = new Tag();
         tag.setText("trainingPredictedClass_" + className);
         customTags.add(tag);
-
 
         for (String op : operators) {
             if (condition.contains(op)) {

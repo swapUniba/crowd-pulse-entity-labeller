@@ -7,8 +7,9 @@ public class Main {
 
         Message msg = new Message();
         msg.setSentiment(30.0);
+        msg.setFavs(1);
 
-        Message m = MessageLabellerPlugin.parseCondition(msg,"sentiment>=30","positivo");
+        Message m = MessageLabellerPlugin.parseCondition(msg,"fav>0","positivo");
         System.out.println(m.toString());
     }
 }
