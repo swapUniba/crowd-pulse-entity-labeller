@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 import rx.Observable;
 import rx.Subscriber;
 import rx.observers.SafeSubscriber;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,7 +54,7 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
         });
     }
 
-    private static Message parseCondition(Message message, String condition, String className) {
+    public static Message parseCondition(Message message, String condition, String className) {
 
         String[] operators = {"==",">=","<=","!=","<",">"};
         String attribute = "";
@@ -60,6 +62,9 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
         String value = "";
 
         List<String> customTags = message.getCustomTags();
+        if (customTags == null) {
+            customTags = new ArrayList<>();
+        }
         customTags.add("trainingPredictedClass:"+className);
 
 
@@ -70,6 +75,7 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                 String[] splitted = condition.split(op); //array di 2 posizioni: nome attributo, valore
                 attribute = splitted[0].trim();
                 value = splitted[1].trim();
+                break;
             }
         }
 
