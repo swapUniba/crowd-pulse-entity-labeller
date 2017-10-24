@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 public class MessageLabellerConfig implements IPluginConfig<MessageLabellerConfig>{
 
     private String className;
+    private String condition = "";
 
     @Override
     public MessageLabellerConfig buildFromJsonElement(JsonElement jsonElement) {
@@ -19,5 +20,13 @@ public class MessageLabellerConfig implements IPluginConfig<MessageLabellerConfi
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
     }
 }
