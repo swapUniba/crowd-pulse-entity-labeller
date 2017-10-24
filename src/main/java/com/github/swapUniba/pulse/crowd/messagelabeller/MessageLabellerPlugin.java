@@ -11,6 +11,7 @@ import rx.Subscriber;
 import rx.observers.SafeSubscriber;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -48,9 +49,6 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
 
             @Override
             public void onNext(Message message) {
-                //List<String> ct = new ArrayList<>();
-                //ct.add("Ciao");
-                //message.setParent(messageLabellerConfig.getClassName());
                 message = parseCondition(message,messageLabellerConfig.getCondition(),messageLabellerConfig.getClassName());
                 subscriber.onNext(message);
             }
@@ -64,16 +62,17 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
         String operator = "";
         String value = "";
 
-        List<String> customTags = message.getCustomTags();
-        if (customTags == null) {
-            customTags = new ArrayList<>();
+        if (message.getTags() == null) {
+            message.setTags(new HashSet<>());
         }
-        customTags.add("trainingPredictedClass:"+className);
+        Set<Tag> customTags = message.getTags();
+        Tag tag = new Tag();
+        tag.setText("trainingPredictedClass_" + className);
+        customTags.add(tag);
 
 
         for (String op : operators) {
             if (condition.contains(op)) {
-                int ii = condition.indexOf(op);
                 operator = op;
                 String[] splitted = condition.split(op); //array di 2 posizioni: nome attributo, valore
                 attribute = splitted[0].trim();
@@ -88,37 +87,39 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
             assert !operator.equalsIgnoreCase("");
             assert !value.equalsIgnoreCase("");
 
+            logger.info("CONDIZIONE:" + attribute + operator + value);
+
             //SENTIMENT
             if (attribute.equalsIgnoreCase("sentiment")) {
                 Double val = Double.parseDouble(value);
                 if (operator.equalsIgnoreCase("==")) {
                     if (message.getSentiment() == val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase(">=")) {
                     if (message.getSentiment() >= val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("<=")) {
                     if (message.getSentiment() <= val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase(">")) {
                     if (message.getSentiment() > val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("<")) {
                     if (message.getSentiment() < val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     if (message.getSentiment() != val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
@@ -127,32 +128,32 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                 Double val = Double.parseDouble(value);
                 if (operator.equalsIgnoreCase("==")) {
                     if (message.getLatitude() == val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase(">=")) {
                     if (message.getLatitude() >= val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("<=")) {
                     if (message.getLatitude() <= val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase(">")) {
                     if (message.getLatitude() > val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("<")) {
                     if (message.getLatitude() < val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     if (message.getLatitude() != val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
@@ -161,32 +162,32 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                 Double val = Double.parseDouble(value);
                 if (operator.equalsIgnoreCase("==")) {
                     if (message.getLongitude() == val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase(">=")) {
                     if (message.getLongitude() >= val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("<=")) {
                     if (message.getLongitude() <= val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase(">")) {
                     if (message.getLongitude() > val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("<")) {
                     if (message.getLongitude() < val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     if (message.getLongitude() != val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
@@ -195,32 +196,32 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                 int val = Integer.parseInt(value);
                 if (operator.equalsIgnoreCase("==")) {
                     if (message.getFavs() == val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase(">=")) {
                     if (message.getFavs() >= val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("<=")) {
                     if (message.getFavs() <= val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase(">")) {
                     if (message.getFavs() > val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("<")) {
                     if (message.getFavs() < val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     if (message.getFavs() != val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
@@ -229,32 +230,32 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                 int val = Integer.parseInt(value);
                 if (operator.equalsIgnoreCase("==")) {
                     if (message.getShares() == val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase(">=")) {
                     if (message.getShares() >= val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("<=")) {
                     if (message.getShares() <= val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase(">")) {
                     if (message.getShares() > val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("<")) {
                     if (message.getShares() < val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     if (message.getShares() != val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
@@ -263,32 +264,32 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                 int val = Integer.parseInt(value);
                 if (operator.equalsIgnoreCase("==")) {
                     if (message.getCluster() == val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase(">=")) {
                     if (message.getCluster() >= val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("<=")) {
                     if (message.getCluster() <= val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase(">")) {
                     if (message.getCluster() > val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("<")) {
                     if (message.getCluster() < val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     if (message.getCluster() != val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
@@ -297,32 +298,32 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                 int val = Integer.parseInt(value);
                 if (operator.equalsIgnoreCase("==")) {
                     if (message.getClusterKmeans() == val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase(">=")) {
                     if (message.getClusterKmeans() >= val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("<=")) {
                     if (message.getClusterKmeans() <= val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase(">")) {
                     if (message.getClusterKmeans() > val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("<")) {
                     if (message.getClusterKmeans() < val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     if (message.getClusterKmeans() != val) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
@@ -331,12 +332,12 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                 String val = value;
                 if (operator.equalsIgnoreCase("==")) {
                     if (message.getLanguage().equalsIgnoreCase(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     if (!message.getLanguage().equalsIgnoreCase(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
@@ -345,12 +346,12 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                 String val = value;
                 if (operator.equalsIgnoreCase("==")) {
                     if (message.getParent().equalsIgnoreCase(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     if (!message.getParent().equalsIgnoreCase(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
@@ -359,12 +360,12 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                 String val = value;
                 if (operator.equalsIgnoreCase("==")) {
                     if (message.getFromUser().equalsIgnoreCase(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     if (!message.getFromUser().equalsIgnoreCase(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
@@ -373,12 +374,12 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                 String val = value;
                 if (operator.equalsIgnoreCase("==")) {
                     if (message.getSource().equalsIgnoreCase(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     if (!message.getSource().equalsIgnoreCase(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
@@ -389,13 +390,13 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                     Set<Tag> tags = message.getTags();
                     List<String> tagsText = tags.stream().map(t -> t.getText()).collect(Collectors.toList());
                     if (tagsText.contains(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     Set<Tag> tags = message.getTags();
                     if (!tags.contains(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
@@ -405,13 +406,13 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                 if (operator.equalsIgnoreCase("==")) {
                     List<String> toUsers = message.getToUsers();
                     if (toUsers.contains(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     List<String> toUsers = message.getToUsers();
                     if (!toUsers.contains(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
@@ -421,13 +422,13 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                 if (operator.equalsIgnoreCase("==")) {
                     List<String> refUsers = message.getRefUsers();
                     if (refUsers.contains(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     List<String> refUsers = message.getRefUsers();
                     if (!refUsers.contains(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
@@ -438,13 +439,13 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                     List<Token> tokens = message.getTokens();
                     List<String> tokensText = tokens.stream().map(t -> t.getText()).collect(Collectors.toList());
                     if (tokensText.contains(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     List<Token> tokens = message.getTokens();
                     if (!tokens.contains(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
@@ -454,19 +455,20 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
                 if (operator.equalsIgnoreCase("==")) {
                     List<String> custom = message.getCustomTags();
                     if (custom.contains(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     List<String> custom = message.getCustomTags();
                     if (!custom.contains(val)) {
-                        message.setCustomTags(customTags);
+                        message.setTags(customTags);
                     }
                 }
             }
+
         }
         else {
-            message.setCustomTags(customTags);
+            message.setTags(customTags);
         }
 
         return message;
