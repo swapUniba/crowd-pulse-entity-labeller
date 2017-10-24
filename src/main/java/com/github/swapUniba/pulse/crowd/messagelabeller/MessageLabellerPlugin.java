@@ -49,25 +49,27 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
 
             @Override
             public void onNext(Message message) {
-                message = parseCondition(message,messageLabellerConfig.getCondition(),messageLabellerConfig.getClassName());
+                message = parseCondition(message,messageLabellerConfig.getModelName(),messageLabellerConfig.getCondition(),messageLabellerConfig.getClassName());
                 subscriber.onNext(message);
             }
         });
     }
 
-    public static Message parseCondition(Message message, String condition, String className) {
+    public static Message parseCondition(Message message, String modelName, String condition, String className) {
 
         String[] operators = {"==",">=","<=","!=","<",">"};
         String attribute = "";
         String operator = "";
         String value = "";
 
+        modelName = modelName.toLowerCase();
+
         if (message.getTags() == null) {
             message.setTags(new HashSet<>());
         }
         Set<Tag> customTags = new HashSet<>(message.getTags());
         Tag tag = new Tag();
-        tag.setText("trainingPredictedClass_" + className);
+        tag.setText("training_" + modelName + "_class_ " + className);
         customTags.add(tag);
 
         for (String op : operators) {
