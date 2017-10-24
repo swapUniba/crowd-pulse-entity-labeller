@@ -48,6 +48,9 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
 
             @Override
             public void onNext(Message message) {
+                //List<String> ct = new ArrayList<>();
+                //ct.add("Ciao");
+                //message.setParent(messageLabellerConfig.getClassName());
                 message = parseCondition(message,messageLabellerConfig.getCondition(),messageLabellerConfig.getClassName());
                 subscriber.onNext(message);
             }
