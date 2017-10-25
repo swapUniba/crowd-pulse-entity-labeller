@@ -9,7 +9,7 @@ public class Main {
         msg.setSentiment(30.0);
         msg.setFavs(1);
 
-        Message m = MessageLabellerPlugin.parseCondition(msg,"fav>0","positivo");
+        Message m = MessageLabellerPlugin.parseCondition(msg,"politica","fav>0","positivo");
         System.out.println(m.toString());
     }
 }
