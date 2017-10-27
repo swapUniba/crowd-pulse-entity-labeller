@@ -12,5 +12,8 @@ public class Main {
 
         Entity m = EntityLabellerPlugin.parseCondition(msg,"politica","fav>0","positivo");
         System.out.println(m.toString());
+
+
+
     }
 }
