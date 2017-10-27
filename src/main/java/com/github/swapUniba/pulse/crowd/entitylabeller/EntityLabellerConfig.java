@@ -1,18 +1,18 @@
-package com.github.swapUniba.pulse.crowd.messagelabeller;
+package com.github.swapUniba.pulse.crowd.entitylabeller;
 
 import com.github.frapontillo.pulse.spi.IPluginConfig;
 import com.github.frapontillo.pulse.spi.PluginConfigHelper;
 import com.google.gson.JsonElement;
 
-public class MessageLabellerConfig implements IPluginConfig<MessageLabellerConfig>{
+public class EntityLabellerConfig implements IPluginConfig<EntityLabellerConfig>{
 
     private String className;
     private String modelName;
     private String condition = "";
 
     @Override
-    public MessageLabellerConfig buildFromJsonElement(JsonElement jsonElement) {
-        return PluginConfigHelper.buildFromJson(jsonElement, MessageLabellerConfig.class);
+    public EntityLabellerConfig buildFromJsonElement(JsonElement jsonElement) {
+        return PluginConfigHelper.buildFromJson(jsonElement, EntityLabellerConfig.class);
     }
 
     public String getClassName() {

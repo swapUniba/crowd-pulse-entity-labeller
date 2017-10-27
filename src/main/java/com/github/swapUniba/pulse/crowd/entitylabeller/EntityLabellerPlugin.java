@@ -1,8 +1,6 @@
-package com.github.swapUniba.pulse.crowd.messagelabeller;
+package com.github.swapUniba.pulse.crowd.entitylabeller;
 
-import com.github.frapontillo.pulse.crowd.data.entity.Message;
-import com.github.frapontillo.pulse.crowd.data.entity.Tag;
-import com.github.frapontillo.pulse.crowd.data.entity.Token;
+import com.github.frapontillo.pulse.crowd.data.entity.*;
 import com.github.frapontillo.pulse.spi.IPlugin;
 import com.github.frapontillo.pulse.util.PulseLogger;
 import org.apache.logging.log4j.Logger;
@@ -14,10 +12,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabellerConfig> {
+public class EntityLabellerPlugin extends IPlugin<Entity,Entity,EntityLabellerConfig> {
 
-    private static final String PLUGIN_NAME = "message-labeller";
-    public static final Logger logger = PulseLogger.getLogger(MessageLabellerPlugin.class);
+    private static final String PLUGIN_NAME = "entity-labeller";
+    public static final Logger logger = PulseLogger.getLogger(EntityLabellerPlugin.class);
 
     @Override
     public String getName() {
@@ -25,13 +23,13 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
     }
 
     @Override
-    public MessageLabellerConfig getNewParameter() {
-        return new MessageLabellerConfig();
+    public EntityLabellerConfig getNewParameter() {
+        return new EntityLabellerConfig();
     }
 
     @Override
-    protected Observable.Operator<Message, Message> getOperator(MessageLabellerConfig messageLabellerConfig) {
-        return subscriber -> new SafeSubscriber<>(new Subscriber<Message>() {
+    protected Observable.Operator<Entity, Entity> getOperator(EntityLabellerConfig messageLabellerConfig) {
+        return subscriber -> new SafeSubscriber<>(new Subscriber<Entity>() {
 
 
             @Override
@@ -46,15 +44,30 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
             }
 
             @Override
-            public void onNext(Message message) {
-                message = parseCondition(message,messageLabellerConfig.getModelName(),messageLabellerConfig.getCondition(),messageLabellerConfig.getClassName());
-                subscriber.onNext(message);
+            public void onNext(Entity entity) {
+                entity = parseCondition(entity,messageLabellerConfig.getModelName(),messageLabellerConfig.getCondition(),messageLabellerConfig.getClassName());
+                subscriber.onNext(entity);
             }
         });
     }
 
-    public static Message parseCondition(Message message, String modelName, String condition, String className) {
+    public static Entity parseCondition(Entity entity, String modelName, String condition, String className) {
 
+        Entity result = null;
+
+        if (entity.getClass() == Message.class) {
+            Message message = (Message)entity;
+            result = parseMessageConditions(message,modelName,condition,className);
+        }
+        else if (entity.getClass() == Profile.class) {
+            // metodo per parsing di profili con condizioni
+        }
+
+        return result;
+
+    }
+
+    private static Message parseMessageConditions(Message message, String modelName, String condition, String className) {
         String[] operators = {"==",">=","<=","!=","<",">"};
         String attribute = "";
         String operator = "";
@@ -471,7 +484,6 @@ public class MessageLabellerPlugin extends IPlugin<Message,Message,MessageLabell
         }
 
         return message;
-
     }
 
 }
