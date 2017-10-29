@@ -487,11 +487,15 @@ public class EntityLabellerPlugin extends IPlugin<Entity,Entity,EntityLabellerCo
         }
         Set<Tag> customTags = new HashSet<>(message.getTags());
 
-        for (Tag tg : customTags) {
-            if (tg.getText().toLowerCase().startsWith("training_" + modelName + "_class_")) {
-                customTags.remove(tg);
-            }
-        }
+//        for (Tag tg : customTags) {
+//            if (tg.getText().toLowerCase().startsWith("training_" + modelName + "_class_")) {
+//                customTags.remove(tg);
+//            }
+//        }
+
+        customTags.stream()
+                .filter(p -> p.getText().toLowerCase().startsWith("training_" + modelName + "_class_"))
+                .collect(Collectors.toList());
 
         Tag tag = new Tag();
         tag.setText("training_" + modelName + "_class_ " + className);
