@@ -19,11 +19,11 @@ public class Main {
         Set<Tag> tags = new HashSet<>();
 
         Tag tg = new Tag();
-        tg.setText("m5s");
+        tg.setText("training_politica_class_5stelle");
         tags.add(tg);
         msg.setTags(tags);
 
-        Entity m = EntityLabellerPlugin.parseCondition(msg,"politica","tags == m5s","5stelle");
+        Entity m = EntityLabellerPlugin.parseCondition(msg,"politica","tags == training_politica_class_5stelle","5stelle");
         System.out.println(m.toString());
 
 
