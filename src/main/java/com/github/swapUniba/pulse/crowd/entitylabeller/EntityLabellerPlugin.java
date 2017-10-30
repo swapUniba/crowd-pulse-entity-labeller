@@ -92,7 +92,7 @@ public class EntityLabellerPlugin extends IPlugin<Entity,Entity,EntityLabellerCo
             assert !operator.equalsIgnoreCase("");
             assert !value.equalsIgnoreCase("");
 
-            logger.info("CONDIZIONE:" + attribute + operator + value);
+            //logger.info("CONDIZIONE:" + attribute + operator + value);
 
             //SENTIMENT
             if (attribute.equalsIgnoreCase("sentiment")) {
@@ -498,7 +498,7 @@ public class EntityLabellerPlugin extends IPlugin<Entity,Entity,EntityLabellerCo
                 .collect(Collectors.toList());
 
         Tag tag = new Tag();
-        tag.setText("training_" + modelName + "_class_ " + className);
+        tag.setText("training_" + modelName + "_class_" + className);
         customTags.add(tag);
 
         message.setTags(customTags);
