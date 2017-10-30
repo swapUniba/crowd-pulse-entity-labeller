@@ -393,14 +393,17 @@ public class EntityLabellerPlugin extends IPlugin<Entity,Entity,EntityLabellerCo
                 String val = value;
                 if (operator.equalsIgnoreCase("==")) {
                     Set<Tag> tags = message.getTags();
-                    List<String> tagsText = tags.stream().map(t -> t.getText()).collect(Collectors.toList());
-                    if (tagsText.contains(val)) {
-                        setClassToMessage(message,modelName,className);
+                    if (tags != null) {
+                        List<String> tagsText = tags.stream().map(t -> t.getText()).collect(Collectors.toList());
+                        if (tagsText.contains(val)) {
+                            setClassToMessage(message,modelName,className);
+                        }
                     }
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     Set<Tag> tags = message.getTags();
-                    if (!tags.contains(val)) {
+                    List<String> tagsText = tags.stream().map(t -> t.getText()).collect(Collectors.toList());
+                    if (!tagsText.contains(val)) {
                         setClassToMessage(message,modelName,className);
                     }
                 }
@@ -449,7 +452,8 @@ public class EntityLabellerPlugin extends IPlugin<Entity,Entity,EntityLabellerCo
                 }
                 if (operator.equalsIgnoreCase("!=")) {
                     List<Token> tokens = message.getTokens();
-                    if (!tokens.contains(val)) {
+                    List<String> tokensText = tokens.stream().map(t -> t.getText()).collect(Collectors.toList());
+                    if (!tokensText.contains(val)) {
                         setClassToMessage(message,modelName,className);
                     }
                 }
