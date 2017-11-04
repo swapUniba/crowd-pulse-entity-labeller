@@ -474,6 +474,50 @@ public class EntityLabellerPlugin extends IPlugin<Entity,Entity,EntityLabellerCo
                     }
                 }
             }
+            //CATEGORIES
+            if (attribute.equalsIgnoreCase("categories")) {
+                String val = value;
+                if (operator.equalsIgnoreCase("==")) {
+                    Set<Tag> tags = message.getTags();
+                    if (tags != null) {
+                          TAG: for (Tag tg : tags) {
+                              if (tg.getCategories() != null) {
+                                  CATEGORY: for (Category cg : tg.getCategories()) {
+                                      if (!cg.isStopWord()) {
+                                          String[] categ = cg.getText().split(":");
+                                          if (categ[1].toLowerCase().contains(val.toLowerCase())) {
+                                              setClassToMessage(message,modelName,className);
+                                              break TAG;
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                    }
+                }
+                if (operator.equalsIgnoreCase("!=")) {
+                    boolean present = false;
+                    Set<Tag> tags = message.getTags();
+                    if (tags != null) {
+                        TAG: for (Tag tg : tags) {
+                            if (tg.getCategories() != null) {
+                                CATEGORY: for (Category cg : tg.getCategories()) {
+                                    if (!cg.isStopWord()) {
+                                        String[] categ = cg.getText().split(":");
+                                        if (categ[1].toLowerCase().contains(val.toLowerCase())) {
+                                            present = true;
+                                            break TAG;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (!present) {
+                        setClassToMessage(message,modelName,className);
+                    }
+                }
+            }
 
         }
         else {

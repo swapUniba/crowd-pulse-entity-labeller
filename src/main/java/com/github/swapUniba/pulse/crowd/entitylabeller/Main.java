@@ -1,5 +1,6 @@
 package com.github.swapUniba.pulse.crowd.entitylabeller;
 
+import com.github.frapontillo.pulse.crowd.data.entity.Category;
 import com.github.frapontillo.pulse.crowd.data.entity.Entity;
 import com.github.frapontillo.pulse.crowd.data.entity.Message;
 import com.github.frapontillo.pulse.crowd.data.entity.Tag;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 public class Main {
+
     public static void main(String[] args) {
 
         Message msg = new Message();
@@ -19,11 +21,26 @@ public class Main {
         Set<Tag> tags = new HashSet<>();
 
         Tag tg = new Tag();
-        tg.setText("training_politica_class_5stelle");
+        tg.setText("grillo");
         tags.add(tg);
+
+        Category ct = new Category();
+        ct.setText("Categoria:parlamentare");
+        Category ct1 = new Category();
+        ct1.setText("Categoria:deputato");
+        Category ct2 = new Category();
+        ct2.setText("Categoria:presidente");
+
+        Set<Category> cats = new HashSet<>();
+        cats.add(ct);
+        cats.add(ct1);
+        cats.add(ct2);
+
+        tg.setCategories(cats);
+
         msg.setTags(tags);
 
-        Entity m = EntityLabellerPlugin.parseCondition(msg,"politica","tags == training_politica_class_5stelle","5stelle");
+        Entity m = EntityLabellerPlugin.parseCondition(msg,"politica","categories == parlamentare","5stelle");
         System.out.println(m.toString());
 
 
