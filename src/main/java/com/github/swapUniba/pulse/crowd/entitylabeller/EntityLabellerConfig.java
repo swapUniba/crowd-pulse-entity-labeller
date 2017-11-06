@@ -32,7 +32,7 @@ public class EntityLabellerConfig implements IPluginConfig<EntityLabellerConfig>
     }
 
     public String getModelName() {
-        return modelName;
+        return modelName.toLowerCase();
     }
 
     public void setModelName(String modelName) {

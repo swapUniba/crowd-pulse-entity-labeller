@@ -24,6 +24,10 @@ public class Main {
         tg.setText("grillo");
         tags.add(tg);
 
+        Tag tg1 = new Tag();
+        tg1.setText("testing_politica_class_m5s");
+        tags.add(tg1);
+
         Category ct = new Category();
         ct.setText("Categoria:parlamentare");
         Category ct1 = new Category();
@@ -40,7 +44,7 @@ public class Main {
 
         msg.setTags(tags);
 
-        Entity m = EntityLabellerPlugin.parseCondition(msg,"politica","categories == parlamentare","5stelle");
+        Entity m = EntityLabellerPlugin.parseCondition(msg,"politica","tags == testing_politica_class_m5s","5stelle");
         System.out.println(m.toString());
 
 
