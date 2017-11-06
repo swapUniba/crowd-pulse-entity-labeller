@@ -7,9 +7,8 @@ import org.apache.logging.log4j.Logger;
 import rx.Observable;
 import rx.Subscriber;
 import rx.observers.SafeSubscriber;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EntityLabellerPlugin extends IPlugin<Entity,Entity,EntityLabellerConfig> {
@@ -67,7 +66,7 @@ public class EntityLabellerPlugin extends IPlugin<Entity,Entity,EntityLabellerCo
 
     }
 
-    private static Message parseMessageConditions(Message message, String modelName, String condition, String className) {
+    private static Message parseMessageConditions(Message message, String modelName, String cond, String className) {
 
         String[] operators = {"==",">=","<=","!=","<",">"};
         String attribute = "";
@@ -76,465 +75,491 @@ public class EntityLabellerPlugin extends IPlugin<Entity,Entity,EntityLabellerCo
 
         modelName = modelName.toLowerCase();
 
-        for (String op : operators) {
-            if (condition.contains(op)) {
-                operator = op;
-                String[] splitted = condition.split(op); //array di 2 posizioni: nome attributo, valore
-                attribute = splitted[0].trim();
-                value = splitted[1].trim();
-                break;
-            }
-        }
+        String[] conditionsArray = cond.split("&&");
+        List<String> conditions = Arrays.asList(conditionsArray);
+        boolean[] satisfied = new boolean[conditions.size()];
 
-        if (!condition.equalsIgnoreCase("")) {
+        for (String condition : conditions) {
 
-            assert !attribute.equalsIgnoreCase("");
-            assert !operator.equalsIgnoreCase("");
-            assert !value.equalsIgnoreCase("");
 
-            //logger.info("CONDIZIONE:" + attribute + operator + value);
+            for (String op : operators) {
+                if (condition.contains(op)) {
+                    operator = op;
+                    String[] splitted = condition.split(op); //array di 2 posizioni: nome attributo, valore
+                    attribute = splitted[0].trim();
+                    value = splitted[1].trim();
+                    break;
+                }
+            }
 
-            //SENTIMENT
-            if (attribute.equalsIgnoreCase("sentiment")) {
-                Double val = Double.parseDouble(value);
-                if (operator.equalsIgnoreCase("==")) {
-                    if (message.getSentiment() == val) {
-                        setClassToMessage(message,modelName,className);
+            if (!condition.equalsIgnoreCase("")) {
+
+                assert !attribute.equalsIgnoreCase("");
+                assert !operator.equalsIgnoreCase("");
+                assert !value.equalsIgnoreCase("");
+
+                //logger.info("CONDIZIONE:" + attribute + operator + value);
+
+                //region Condizioni
+
+                //SENTIMENT
+                if (attribute.equalsIgnoreCase("sentiment")) {
+                    Double val = Double.parseDouble(value);
+                    if (operator.equalsIgnoreCase("==")) {
+                        if (message.getSentiment() == val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
                     }
-                }
-                if (operator.equalsIgnoreCase(">=")) {
-                    if (message.getSentiment() >= val) {
-                        setClassToMessage(message,modelName,className);
+                    if (operator.equalsIgnoreCase(">=")) {
+                        if (message.getSentiment() >= val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
                     }
-                }
-                if (operator.equalsIgnoreCase("<=")) {
-                    if (message.getSentiment() <= val) {
-                        setClassToMessage(message,modelName,className);
+                    if (operator.equalsIgnoreCase("<=")) {
+                        if (message.getSentiment() <= val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
                     }
-                }
-                if (operator.equalsIgnoreCase(">")) {
-                    if (message.getSentiment() > val) {
-                        setClassToMessage(message,modelName,className);
+                    if (operator.equalsIgnoreCase(">")) {
+                        if (message.getSentiment() > val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
                     }
-                }
-                if (operator.equalsIgnoreCase("<")) {
-                    if (message.getSentiment() < val) {
-                        setClassToMessage(message,modelName,className);
+                    if (operator.equalsIgnoreCase("<")) {
+                        if (message.getSentiment() < val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
                     }
-                }
-                if (operator.equalsIgnoreCase("!=")) {
-                    if (message.getSentiment() != val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-            }
-            //LATITUDE
-            if (attribute.equalsIgnoreCase("latitude")) {
-                Double val = Double.parseDouble(value);
-                if (operator.equalsIgnoreCase("==")) {
-                    if (message.getLatitude() == val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase(">=")) {
-                    if (message.getLatitude() >= val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("<=")) {
-                    if (message.getLatitude() <= val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase(">")) {
-                    if (message.getLatitude() > val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("<")) {
-                    if (message.getLatitude() < val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("!=")) {
-                    if (message.getLatitude() != val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-            }
-            //LONGITUDE
-            if (attribute.equalsIgnoreCase("longitude")) {
-                Double val = Double.parseDouble(value);
-                if (operator.equalsIgnoreCase("==")) {
-                    if (message.getLongitude() == val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase(">=")) {
-                    if (message.getLongitude() >= val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("<=")) {
-                    if (message.getLongitude() <= val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase(">")) {
-                    if (message.getLongitude() > val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("<")) {
-                    if (message.getLongitude() < val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("!=")) {
-                    if (message.getLongitude() != val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-            }
-            //FAVS
-            if (attribute.equalsIgnoreCase("favs")) {
-                int val = Integer.parseInt(value);
-                if (operator.equalsIgnoreCase("==")) {
-                    if (message.getFavs() == val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase(">=")) {
-                    if (message.getFavs() >= val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("<=")) {
-                    if (message.getFavs() <= val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase(">")) {
-                    if (message.getFavs() > val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("<")) {
-                    if (message.getFavs() < val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("!=")) {
-                    if (message.getFavs() != val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-            }
-            //SHARES
-            if (attribute.equalsIgnoreCase("shares")) {
-                int val = Integer.parseInt(value);
-                if (operator.equalsIgnoreCase("==")) {
-                    if (message.getShares() == val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase(">=")) {
-                    if (message.getShares() >= val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("<=")) {
-                    if (message.getShares() <= val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase(">")) {
-                    if (message.getShares() > val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("<")) {
-                    if (message.getShares() < val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("!=")) {
-                    if (message.getShares() != val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-            }
-            //NUMBER_CLUSTER
-            if (attribute.equalsIgnoreCase("number_cluster")) {
-                int val = Integer.parseInt(value);
-                if (operator.equalsIgnoreCase("==")) {
-                    if (message.getCluster() == val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase(">=")) {
-                    if (message.getCluster() >= val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("<=")) {
-                    if (message.getCluster() <= val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase(">")) {
-                    if (message.getCluster() > val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("<")) {
-                    if (message.getCluster() < val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("!=")) {
-                    if (message.getCluster() != val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-            }
-            //CLUSTER_KMEANS
-            if (attribute.equalsIgnoreCase("cluster_kmeans")) {
-                int val = Integer.parseInt(value);
-                if (operator.equalsIgnoreCase("==")) {
-                    if (message.getClusterKmeans() == val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase(">=")) {
-                    if (message.getClusterKmeans() >= val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("<=")) {
-                    if (message.getClusterKmeans() <= val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase(">")) {
-                    if (message.getClusterKmeans() > val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("<")) {
-                    if (message.getClusterKmeans() < val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("!=")) {
-                    if (message.getClusterKmeans() != val) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-            }
-            //LANGUAGE
-            if (attribute.equalsIgnoreCase("language")) {
-                String val = value;
-                if (operator.equalsIgnoreCase("==")) {
-                    if (message.getLanguage().equalsIgnoreCase(val)) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("!=")) {
-                    if (!message.getLanguage().equalsIgnoreCase(val)) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-            }
-            //oId
-            if (attribute.equalsIgnoreCase("oId")) {
-                String val = value;
-                if (operator.equalsIgnoreCase("==")) {
-                    if (message.getoId().equals(val)) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("!=")) {
-                    if (!message.getoId().equals(val)) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-            }
-            //PARENT
-            if (attribute.equalsIgnoreCase("parent")) {
-                String val = value;
-                if (operator.equalsIgnoreCase("==")) {
-                    if (message.getParent().equalsIgnoreCase(val)) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("!=")) {
-                    if (!message.getParent().equalsIgnoreCase(val)) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-            }
-            //FROMUSER
-            if (attribute.equalsIgnoreCase("fromUser")) {
-                String val = value;
-                if (operator.equalsIgnoreCase("==")) {
-                    if (message.getFromUser().equalsIgnoreCase(val)) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("!=")) {
-                    if (!message.getFromUser().equalsIgnoreCase(val)) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-            }
-            //SOURCE
-            if (attribute.equalsIgnoreCase("source")) {
-                String val = value;
-                if (operator.equalsIgnoreCase("==")) {
-                    if (message.getSource().equalsIgnoreCase(val)) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-                if (operator.equalsIgnoreCase("!=")) {
-                    if (!message.getSource().equalsIgnoreCase(val)) {
-                        setClassToMessage(message,modelName,className);
-                    }
-                }
-            }
-            //TAGS
-            if (attribute.equalsIgnoreCase("tags")) {
-                String val = value;
-                if (operator.equalsIgnoreCase("==")) {
-                    Set<Tag> tags = message.getTags();
-                    if (tags != null) {
-                        List<String> tagsText = tags.stream().map(t -> t.getText()).collect(Collectors.toList());
-                        if (tagsText.contains(val)) {
-                            setClassToMessage(message,modelName,className);
+                    if (operator.equalsIgnoreCase("!=")) {
+                        if (message.getSentiment() != val) {
+                            satisfied[conditions.indexOf(condition)] = true;
                         }
                     }
                 }
-                if (operator.equalsIgnoreCase("!=")) {
-                    Set<Tag> tags = message.getTags();
-                    List<String> tagsText = tags.stream().map(t -> t.getText()).collect(Collectors.toList());
-                    if (!tagsText.contains(val)) {
-                        setClassToMessage(message,modelName,className);
+                //LATITUDE
+                if (attribute.equalsIgnoreCase("latitude")) {
+                    Double val = Double.parseDouble(value);
+                    if (operator.equalsIgnoreCase("==")) {
+                        if (message.getLatitude() == val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase(">=")) {
+                        if (message.getLatitude() >= val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("<=")) {
+                        if (message.getLatitude() <= val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase(">")) {
+                        if (message.getLatitude() > val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("<")) {
+                        if (message.getLatitude() < val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        if (message.getLatitude() != val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
                     }
                 }
-            }
-            //TOUSERS
-            if (attribute.equalsIgnoreCase("tousers")) {
-                String val = value;
-                if (operator.equalsIgnoreCase("==")) {
-                    List<String> toUsers = message.getToUsers();
-                    if (toUsers.contains(val)) {
-                        setClassToMessage(message,modelName,className);
+                //LONGITUDE
+                if (attribute.equalsIgnoreCase("longitude")) {
+                    Double val = Double.parseDouble(value);
+                    if (operator.equalsIgnoreCase("==")) {
+                        if (message.getLongitude() == val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase(">=")) {
+                        if (message.getLongitude() >= val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("<=")) {
+                        if (message.getLongitude() <= val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase(">")) {
+                        if (message.getLongitude() > val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("<")) {
+                        if (message.getLongitude() < val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        if (message.getLongitude() != val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
                     }
                 }
-                if (operator.equalsIgnoreCase("!=")) {
-                    List<String> toUsers = message.getToUsers();
-                    if (!toUsers.contains(val)) {
-                        setClassToMessage(message,modelName,className);
+                //FAVS
+                if (attribute.equalsIgnoreCase("favs")) {
+                    int val = Integer.parseInt(value);
+                    if (operator.equalsIgnoreCase("==")) {
+                        if (message.getFavs() == val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase(">=")) {
+                        if (message.getFavs() >= val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("<=")) {
+                        if (message.getFavs() <= val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase(">")) {
+                        if (message.getFavs() > val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("<")) {
+                        if (message.getFavs() < val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        if (message.getFavs() != val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
                     }
                 }
-            }
-            //REFUSERS
-            if (attribute.equalsIgnoreCase("refusers")) {
-                String val = value;
-                if (operator.equalsIgnoreCase("==")) {
-                    List<String> refUsers = message.getRefUsers();
-                    if (refUsers.contains(val)) {
-                        setClassToMessage(message,modelName,className);
+                //SHARES
+                if (attribute.equalsIgnoreCase("shares")) {
+                    int val = Integer.parseInt(value);
+                    if (operator.equalsIgnoreCase("==")) {
+                        if (message.getShares() == val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase(">=")) {
+                        if (message.getShares() >= val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("<=")) {
+                        if (message.getShares() <= val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase(">")) {
+                        if (message.getShares() > val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("<")) {
+                        if (message.getShares() < val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        if (message.getShares() != val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
                     }
                 }
-                if (operator.equalsIgnoreCase("!=")) {
-                    List<String> refUsers = message.getRefUsers();
-                    if (!refUsers.contains(val)) {
-                        setClassToMessage(message,modelName,className);
+                //NUMBER_CLUSTER
+                if (attribute.equalsIgnoreCase("number_cluster")) {
+                    int val = Integer.parseInt(value);
+                    if (operator.equalsIgnoreCase("==")) {
+                        if (message.getCluster() == val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase(">=")) {
+                        if (message.getCluster() >= val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("<=")) {
+                        if (message.getCluster() <= val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase(">")) {
+                        if (message.getCluster() > val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("<")) {
+                        if (message.getCluster() < val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        if (message.getCluster() != val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
                     }
                 }
-            }
-            //TOKENS
-            if (attribute.equalsIgnoreCase("tokens")) {
-                String val = value;
-                if (operator.equalsIgnoreCase("==")) {
-                    List<Token> tokens = message.getTokens();
-                    List<String> tokensText = tokens.stream().map(t -> t.getText()).collect(Collectors.toList());
-                    if (tokensText.contains(val)) {
-                        setClassToMessage(message,modelName,className);
+                //CLUSTER_KMEANS
+                if (attribute.equalsIgnoreCase("cluster_kmeans")) {
+                    int val = Integer.parseInt(value);
+                    if (operator.equalsIgnoreCase("==")) {
+                        if (message.getClusterKmeans() == val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase(">=")) {
+                        if (message.getClusterKmeans() >= val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("<=")) {
+                        if (message.getClusterKmeans() <= val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase(">")) {
+                        if (message.getClusterKmeans() > val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("<")) {
+                        if (message.getClusterKmeans() < val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        if (message.getClusterKmeans() != val) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
                     }
                 }
-                if (operator.equalsIgnoreCase("!=")) {
-                    List<Token> tokens = message.getTokens();
-                    List<String> tokensText = tokens.stream().map(t -> t.getText()).collect(Collectors.toList());
-                    if (!tokensText.contains(val)) {
-                        setClassToMessage(message,modelName,className);
+                //LANGUAGE
+                if (attribute.equalsIgnoreCase("language")) {
+                    String val = value;
+                    if (operator.equalsIgnoreCase("==")) {
+                        if (message.getLanguage().equalsIgnoreCase(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        if (!message.getLanguage().equalsIgnoreCase(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
                     }
                 }
-            }
-            //CUSTOMTAGS
-            if (attribute.equalsIgnoreCase("customtags")) {
-                String val = value;
-                if (operator.equalsIgnoreCase("==")) {
-                    List<String> custom = message.getCustomTags();
-                    if (custom.contains(val)) {
-                        setClassToMessage(message,modelName,className);
+                //oId
+                if (attribute.equalsIgnoreCase("oId")) {
+                    String val = value;
+                    if (operator.equalsIgnoreCase("==")) {
+                        if (message.getoId().equals(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        if (!message.getoId().equals(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
                     }
                 }
-                if (operator.equalsIgnoreCase("!=")) {
-                    List<String> custom = message.getCustomTags();
-                    if (!custom.contains(val)) {
-                        setClassToMessage(message,modelName,className);
+                //PARENT
+                if (attribute.equalsIgnoreCase("parent")) {
+                    String val = value;
+                    if (operator.equalsIgnoreCase("==")) {
+                        if (message.getParent().equalsIgnoreCase(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        if (!message.getParent().equalsIgnoreCase(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
                     }
                 }
-            }
-            //CATEGORIES
-            if (attribute.equalsIgnoreCase("categories")) {
-                String val = value;
-                if (operator.equalsIgnoreCase("==")) {
-                    Set<Tag> tags = message.getTags();
-                    if (tags != null) {
-                          TAG: for (Tag tg : tags) {
-                              if (tg.getCategories() != null) {
-                                  CATEGORY: for (Category cg : tg.getCategories()) {
-                                      if (!cg.isStopWord()) {
-                                          String[] categ = cg.getText().split(":");
-                                          if (categ[1].toLowerCase().contains(val.toLowerCase())) {
-                                              setClassToMessage(message,modelName,className);
-                                              break TAG;
+                //FROMUSER
+                if (attribute.equalsIgnoreCase("fromUser")) {
+                    String val = value;
+                    if (operator.equalsIgnoreCase("==")) {
+                        if (message.getFromUser().equalsIgnoreCase(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        if (!message.getFromUser().equalsIgnoreCase(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                }
+                //SOURCE
+                if (attribute.equalsIgnoreCase("source")) {
+                    String val = value;
+                    if (operator.equalsIgnoreCase("==")) {
+                        if (message.getSource().equalsIgnoreCase(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        if (!message.getSource().equalsIgnoreCase(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                }
+                //TAGS
+                if (attribute.equalsIgnoreCase("tags")) {
+                    String val = value;
+                    if (operator.equalsIgnoreCase("==")) {
+                        Set<Tag> tags = message.getTags();
+                        if (tags != null) {
+                            List<String> tagsText = tags.stream().map(t -> t.getText()).collect(Collectors.toList());
+                            if (tagsText.contains(val)) {
+                                satisfied[conditions.indexOf(condition)] = true;
+                            }
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        Set<Tag> tags = message.getTags();
+                        List<String> tagsText = tags.stream().map(t -> t.getText()).collect(Collectors.toList());
+                        if (!tagsText.contains(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                }
+                //TOUSERS
+                if (attribute.equalsIgnoreCase("tousers")) {
+                    String val = value;
+                    if (operator.equalsIgnoreCase("==")) {
+                        List<String> toUsers = message.getToUsers();
+                        if (toUsers.contains(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        List<String> toUsers = message.getToUsers();
+                        if (!toUsers.contains(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                }
+                //REFUSERS
+                if (attribute.equalsIgnoreCase("refusers")) {
+                    String val = value;
+                    if (operator.equalsIgnoreCase("==")) {
+                        List<String> refUsers = message.getRefUsers();
+                        if (refUsers.contains(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        List<String> refUsers = message.getRefUsers();
+                        if (!refUsers.contains(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                }
+                //TOKENS
+                if (attribute.equalsIgnoreCase("tokens")) {
+                    String val = value;
+                    if (operator.equalsIgnoreCase("==")) {
+                        List<Token> tokens = message.getTokens();
+                        List<String> tokensText = tokens.stream().map(t -> t.getText()).collect(Collectors.toList());
+                        if (tokensText.contains(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        List<Token> tokens = message.getTokens();
+                        List<String> tokensText = tokens.stream().map(t -> t.getText()).collect(Collectors.toList());
+                        if (!tokensText.contains(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                }
+                //CUSTOMTAGS
+                if (attribute.equalsIgnoreCase("customtags")) {
+                    String val = value;
+                    if (operator.equalsIgnoreCase("==")) {
+                        List<String> custom = message.getCustomTags();
+                        if (custom.contains(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                    if (operator.equalsIgnoreCase("!=")) {
+                        List<String> custom = message.getCustomTags();
+                        if (!custom.contains(val)) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
+                    }
+                }
+                //CATEGORIES
+                if (attribute.equalsIgnoreCase("categories")) {
+                    String val = value;
+                    if (operator.equalsIgnoreCase("==")) {
+                        Set<Tag> tags = message.getTags();
+                        if (tags != null) {
+                              TAG: for (Tag tg : tags) {
+                                  if (tg.getCategories() != null) {
+                                      CATEGORY: for (Category cg : tg.getCategories()) {
+                                          if (!cg.isStopWord()) {
+                                              String[] categ = cg.getText().split(":");
+                                              if (categ[1].toLowerCase().contains(val.toLowerCase())) {
+                                                  satisfied[conditions.indexOf(condition)] = true;
+                                                  break TAG;
+                                              }
                                           }
                                       }
                                   }
                               }
-                          }
+                        }
                     }
-                }
-                if (operator.equalsIgnoreCase("!=")) {
-                    boolean present = false;
-                    Set<Tag> tags = message.getTags();
-                    if (tags != null) {
-                        TAG: for (Tag tg : tags) {
-                            if (tg.getCategories() != null) {
-                                CATEGORY: for (Category cg : tg.getCategories()) {
-                                    if (!cg.isStopWord()) {
-                                        String[] categ = cg.getText().split(":");
-                                        if (categ[1].toLowerCase().contains(val.toLowerCase())) {
-                                            present = true;
-                                            break TAG;
+                    if (operator.equalsIgnoreCase("!=")) {
+                        boolean present = false;
+                        Set<Tag> tags = message.getTags();
+                        if (tags != null) {
+                            TAG: for (Tag tg : tags) {
+                                if (tg.getCategories() != null) {
+                                    CATEGORY: for (Category cg : tg.getCategories()) {
+                                        if (!cg.isStopWord()) {
+                                            String[] categ = cg.getText().split(":");
+                                            if (categ[1].toLowerCase().contains(val.toLowerCase())) {
+                                                present = true;
+                                                break TAG;
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                    if (!present) {
-                        setClassToMessage(message,modelName,className);
+                        if (!present) {
+                            satisfied[conditions.indexOf(condition)] = true;
+                        }
                     }
                 }
+
+            }
+            else {
+                satisfied[conditions.indexOf(condition)] = true;
             }
 
+            //endregion
         }
-        else {
+
+
+        boolean allSatisfied = true;
+
+        for (boolean b : satisfied) {
+            if (!b) {
+                allSatisfied = false;
+                break;
+            }
+        }
+
+        if (allSatisfied) {
             setClassToMessage(message,modelName,className);
         }
 

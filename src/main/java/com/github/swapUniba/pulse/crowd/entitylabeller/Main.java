@@ -44,7 +44,7 @@ public class Main {
 
         msg.setTags(tags);
 
-        Entity m = EntityLabellerPlugin.parseCondition(msg,"politica","oid == ciao","5stelle");
+        Entity m = EntityLabellerPlugin.parseCondition(msg,"politica","oid == ciao && sentiment > 0","5stelle");
         System.out.println(m.toString());
 
 
