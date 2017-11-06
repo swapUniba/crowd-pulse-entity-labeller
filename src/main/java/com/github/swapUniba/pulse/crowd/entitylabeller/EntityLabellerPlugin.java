@@ -346,6 +346,20 @@ public class EntityLabellerPlugin extends IPlugin<Entity,Entity,EntityLabellerCo
                     }
                 }
             }
+            //oId
+            if (attribute.equalsIgnoreCase("oId")) {
+                String val = value;
+                if (operator.equalsIgnoreCase("==")) {
+                    if (message.getoId().equals(val)) {
+                        setClassToMessage(message,modelName,className);
+                    }
+                }
+                if (operator.equalsIgnoreCase("!=")) {
+                    if (!message.getoId().equals(val)) {
+                        setClassToMessage(message,modelName,className);
+                    }
+                }
+            }
             //PARENT
             if (attribute.equalsIgnoreCase("parent")) {
                 String val = value;
