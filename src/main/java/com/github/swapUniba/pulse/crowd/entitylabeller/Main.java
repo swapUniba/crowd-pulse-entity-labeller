@@ -17,7 +17,7 @@ public class Main {
         Message msg = new Message();
         msg.setSentiment(30.0);
         msg.setFavs(1);
-
+        msg.setoId("ciao");
         Set<Tag> tags = new HashSet<>();
 
         Tag tg = new Tag();
@@ -44,7 +44,7 @@ public class Main {
 
         msg.setTags(tags);
 
-        Entity m = EntityLabellerPlugin.parseCondition(msg,"politica","tags == testing_politica_class_m5s","5stelle");
+        Entity m = EntityLabellerPlugin.parseCondition(msg,"politica","oid == ciao","5stelle");
         System.out.println(m.toString());
 
 
