@@ -8,7 +8,7 @@ public class EntityLabellerConfig implements IPluginConfig<EntityLabellerConfig>
 
     private String className;
     private String modelName;
-    private String condition = "";
+    private String conditions = "";
 
     @Override
     public EntityLabellerConfig buildFromJsonElement(JsonElement jsonElement) {
@@ -23,12 +23,12 @@ public class EntityLabellerConfig implements IPluginConfig<EntityLabellerConfig>
         this.className = className;
     }
 
-    public String getCondition() {
-        return condition;
+    public String getConditions() {
+        return conditions;
     }
 
-    public void setCondition(String condition) {
-        this.condition = condition;
+    public void setConditions(String conditions) {
+        this.conditions = conditions;
     }
 
     public String getModelName() {

@@ -44,7 +44,7 @@ public class EntityLabellerPlugin extends IPlugin<Entity,Entity,EntityLabellerCo
 
             @Override
             public void onNext(Entity entity) {
-                entity = parseCondition(entity,messageLabellerConfig.getModelName(),messageLabellerConfig.getCondition(),messageLabellerConfig.getClassName());
+                entity = parseCondition(entity,messageLabellerConfig.getModelName(),messageLabellerConfig.getConditions(),messageLabellerConfig.getClassName());
                 subscriber.onNext(entity);
             }
         });
