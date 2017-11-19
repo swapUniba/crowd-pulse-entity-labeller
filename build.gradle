@@ -14,5 +14,5 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile 'com.github.swapUniba:crowd-pulse-data-java:0.0.1'
+    compile 'com.github.swapUniba:crowd-pulse-data-java:master-SNAPSHOT'
 }
